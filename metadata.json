@@ -1,0 +1,6 @@
+{
+  "name": "Organisateur de Bagages",
+  "description": "Application pour gérer des listes de bagages par périodes de vacances, avec possibilité d'archiver et de réutiliser des listes comme modèles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
