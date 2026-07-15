@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Trip } from '../types';
 import { BagView } from './BagView';
-import { ArrowLeft, Plus, Briefcase, Printer } from 'lucide-react';
+import { ArrowLeft, Plus, Briefcase, Printer, X } from 'lucide-react';
 
 interface TripDetailProps {
   trip: Trip;
@@ -24,6 +24,8 @@ export function TripDetail({
 }: TripDetailProps) {
   const [newBagName, setNewBagName] = useState('');
   const [isAddingBag, setIsAddingBag] = useState(false);
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [bagPages, setBagPages] = useState<Record<string, number>>({});
 
   const handleAddBag = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +35,17 @@ export function TripDetail({
       setIsAddingBag(false);
     }
   };
+
+  const openPrintModal = () => {
+    const initialAssignments: Record<string, number> = {};
+    trip.bags.forEach((bag, index) => {
+      initialAssignments[bag.id] = Math.floor(index / 2) + 1; // 2 bags per page by default
+    });
+    setBagPages(initialAssignments);
+    setIsPrintModalOpen(true);
+  };
+
+  const uniquePages = Array.from(new Set(Object.values(bagPages))).sort((a, b) => a - b);
 
   const totalItems = trip.bags.reduce((acc, bag) => acc + bag.items.length, 0);
   const packedItems = trip.bags.reduce((acc, bag) => acc + bag.items.filter(i => i.isPacked).length, 0);
@@ -57,12 +70,12 @@ export function TripDetail({
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => window.print()}
+              onClick={openPrintModal}
               className="p-2 text-[#5d6d53] bg-[#f1eee4] hover:bg-[#e5e1d5] rounded-full transition-colors flex items-center gap-2 px-4"
-              title="Imprimer"
+              title="Générer PDF / Imprimer"
             >
               <Printer size={18} />
-              <span className="text-sm font-medium">Imprimer</span>
+              <span className="text-sm font-medium hidden sm:inline">PDF / Imprimer</span>
             </button>
             <div className="text-right hidden sm:block">
               <div className="text-sm font-medium text-[#5d6d53]">{progress}% Prêt</div>
@@ -155,44 +168,121 @@ export function TripDetail({
         </main>
       </div>
 
+      {/* Print Configuration Modal */}
+      {isPrintModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:hidden">
+          <div className="bg-[#fdfcf9] rounded-3xl p-6 w-full max-w-lg border border-[#e5e1d5] shadow-xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-serif italic font-bold text-[#3e4a36]">Configuration PDF</h2>
+              <button onClick={() => setIsPrintModalOpen(false)} className="text-[#8c887d] hover:text-[#434138] p-1">
+                <X size={20} />
+              </button>
+            </div>
+            <p className="text-sm text-[#8c887d] mb-4">
+              Choisissez sur quelle page chaque bagage doit apparaître. Nous recommandons 2 bagages par page pour un rendu optimal.
+            </p>
+            <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2 mb-6">
+              {trip.bags.map(bag => (
+                <div key={bag.id} className="flex items-center justify-between p-3 bg-white border border-[#e5e1d5] rounded-xl">
+                  <span className="font-medium text-[#434138] truncate pr-4">{bag.name}</span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <label className="text-xs text-[#8c887d] uppercase font-bold tracking-wider">Page</label>
+                    <select
+                      value={bagPages[bag.id] || 1}
+                      onChange={(e) => setBagPages({ ...bagPages, [bag.id]: parseInt(e.target.value) })}
+                      className="bg-[#f1eee4] border border-[#e5e1d5] rounded-lg text-sm px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#5d6d53] font-medium text-[#434138]"
+                    >
+                      {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              ))}
+              {trip.bags.length === 0 && (
+                <p className="text-sm text-[#8c887d] italic text-center py-4">Aucun bagage à imprimer.</p>
+              )}
+            </div>
+            <button
+              disabled={trip.bags.length === 0}
+              onClick={() => {
+                setIsPrintModalOpen(false);
+                setTimeout(() => window.print(), 300);
+              }}
+              className="w-full flex items-center justify-center gap-2 bg-[#5d6d53] text-white py-3 rounded-2xl shadow-md shadow-[#5d6d53]/20 hover:bg-[#3e4a36] transition-colors font-medium disabled:opacity-50"
+            >
+              <Printer size={18} />
+              Générer le PDF
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Print Layout */}
-      <div className="hidden print:block print:w-full print:bg-white print:text-black">
+      <div className="hidden print:block w-full bg-white text-black">
         <style>{`
           @media print {
-            @page { margin: 1cm; }
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { margin: 0; size: A4 portrait; }
+            body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white !important; }
+            .print-page {
+              width: 210mm;
+              min-height: 296mm;
+              padding: 10mm;
+              box-sizing: border-box;
+              page-break-after: always;
+              background: white;
+            }
+            .print-page:last-child {
+              page-break-after: auto;
+            }
           }
         `}</style>
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold font-serif italic text-black">{trip.name}</h1>
-          {trip.date && <p className="text-sm text-gray-600 mt-2">{trip.date}</p>}
-        </div>
-        <div className="grid grid-cols-2 gap-x-12 gap-y-12">
-          {trip.bags.map(bag => (
-            <div key={bag.id} className="break-inside-avoid">
-              <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
-                {bag.name}
+        
+        {uniquePages.length > 0 ? uniquePages.map(pageNum => {
+          const bagsOnPage = trip.bags.filter(b => bagPages[b.id] === pageNum);
+          if (bagsOnPage.length === 0) return null;
+          
+          return (
+            <div key={pageNum} className="print-page">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold font-serif italic text-black">{trip.name}</h1>
+                <div className="flex justify-center items-center gap-4 mt-2">
+                  {trip.date && <p className="text-sm text-gray-600">{trip.date}</p>}
+                  <p className="text-xs text-gray-400">Page {pageNum}</p>
+                </div>
               </div>
-              <div className="border border-[#a2b9ce]">
-                {bag.items.map((item, index) => (
-                  <div 
-                    key={item.id} 
-                    className={`px-3 py-2 text-[13px] min-h-[32px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
-                  >
-                    <span className="text-gray-900">{item.name}</span>
-                    <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px]"></div>
+              <div className="grid grid-cols-2 gap-x-10 gap-y-10 items-start">
+                {bagsOnPage.map(bag => (
+                  <div key={bag.id} className="break-inside-avoid">
+                    <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
+                      {bag.name}
+                    </div>
+                    <div className="border border-[#a2b9ce]">
+                      {bag.items.map((item, index) => (
+                        <div 
+                          key={item.id} 
+                          className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
+                        >
+                          <span className="text-gray-900 leading-tight">{item.name}</span>
+                          <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
+                        </div>
+                      ))}
+                      {bag.items.length === 0 && (
+                        <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
+                          Aucun élément
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
-                {bag.items.length === 0 && (
-                  <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
-                    Aucun élément
-                  </div>
-                )}
               </div>
             </div>
-          ))}
-        </div>
+          );
+        }) : (
+           <div className="print-page text-center pt-20 text-gray-500">Aucun bagage</div>
+        )}
       </div>
     </>
   );
 }
+
