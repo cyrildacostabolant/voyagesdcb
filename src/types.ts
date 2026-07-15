@@ -7,6 +7,7 @@ export interface Item {
 export interface Bag {
   id: string;
   name: string;
+  page?: number;
   items: Item[];
 }
 

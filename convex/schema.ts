@@ -10,6 +10,7 @@ export default defineSchema({
   bags: defineTable({
     tripId: v.id("trips"),
     name: v.string(),
+    page: v.optional(v.number()),
   }),
   items: defineTable({
     bagId: v.id("bags"),

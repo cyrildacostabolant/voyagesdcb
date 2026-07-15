@@ -66,6 +66,7 @@ export const duplicateTrip = mutationGeneric({
       const newBagId = await ctx.db.insert("bags", {
         tripId,
         name: bag.name,
+        page: bag.page ?? 1,
       });
 
       const items = await ctx.db

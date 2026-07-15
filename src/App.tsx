@@ -24,6 +24,7 @@ export default function App() {
           onBack={() => setSelectedTripId(null)}
           onAddBag={store.addBag}
           onDeleteBag={store.deleteBag}
+          onUpdateBagPage={store.updateBagPage}
           onAddItem={store.addItem}
           onToggleItem={store.toggleItemPacked}
           onDeleteItem={store.deleteItem}

@@ -9,9 +9,10 @@ interface BagViewProps {
   onToggleItem: (tripId: string, bagId: string, itemId: string, isPacked: boolean) => void;
   onDeleteItem: (tripId: string, bagId: string, itemId: string) => void;
   onDeleteBag: (tripId: string, bagId: string) => void;
+  onUpdateBagPage: (bagId: string, page: number) => void;
 }
 
-export function BagView({ tripId, bag, onAddItem, onToggleItem, onDeleteItem, onDeleteBag }: BagViewProps) {
+export function BagView({ tripId, bag, onAddItem, onToggleItem, onDeleteItem, onDeleteBag, onUpdateBagPage }: BagViewProps) {
   const [newItemName, setNewItemName] = useState('');
 
   const handleAdd = (e: React.FormEvent) => {
@@ -25,16 +26,30 @@ export function BagView({ tripId, bag, onAddItem, onToggleItem, onDeleteItem, on
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-[#e5e1d5] overflow-hidden flex flex-col">
       <div className="bg-[#fdfcf9] px-5 py-4 border-b border-[#e5e1d5] flex justify-between items-center group">
-        <h3 className="font-serif italic font-bold text-[#3e4a36] text-xl">{bag.name}</h3>
-        <button
-          onClick={() => {
-            if(window.confirm('Supprimer ce bagage ?')) onDeleteBag(tripId, bag.id);
-          }}
-          className="text-[#8c887d] hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-          title="Supprimer le bagage"
-        >
-          <Trash2 size={18} />
-        </button>
+        <h3 className="font-serif italic font-bold text-[#3e4a36] text-xl truncate pr-2">{bag.name}</h3>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1">
+            <span className="text-[10px] text-[#8c887d] uppercase font-bold tracking-wider">Page</span>
+            <select
+              value={bag.page || 1}
+              onChange={(e) => onUpdateBagPage(bag.id, parseInt(e.target.value))}
+              className="bg-[#f1eee4] border-none rounded-md text-xs px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#5d6d53] font-medium text-[#434138] cursor-pointer"
+            >
+              {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </div>
+          <button
+            onClick={() => {
+              if(window.confirm('Supprimer ce bagage ?')) onDeleteBag(tripId, bag.id);
+            }}
+            className="text-[#8c887d] hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+            title="Supprimer le bagage"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       </div>
       <div className="p-5 flex-1 bg-white">
         <ul className="space-y-2">

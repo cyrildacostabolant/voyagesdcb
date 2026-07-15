@@ -9,6 +9,7 @@ export const api = {
   bags: {
     addBag: "bags:addBag",
     deleteBag: "bags:deleteBag",
+    updateBagPage: "bags:updateBagPage",
   },
   items: {
     addItem: "items:addItem",

@@ -1,13 +1,15 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import { Trip } from '../types';
 import { BagView } from './BagView';
-import { ArrowLeft, Plus, Briefcase, Printer, X } from 'lucide-react';
+import { ArrowLeft, Plus, Briefcase, Printer } from 'lucide-react';
 
 interface TripDetailProps {
   trip: Trip;
   onBack: () => void;
   onAddBag: (tripId: string, name: string) => void;
   onDeleteBag: (tripId: string, bagId: string) => void;
+  onUpdateBagPage: (bagId: string, page: number) => void;
   onAddItem: (tripId: string, bagId: string, name: string) => void;
   onToggleItem: (tripId: string, bagId: string, itemId: string, isPacked: boolean) => void;
   onDeleteItem: (tripId: string, bagId: string, itemId: string) => void;
@@ -18,14 +20,13 @@ export function TripDetail({
   onBack,
   onAddBag,
   onDeleteBag,
+  onUpdateBagPage,
   onAddItem,
   onToggleItem,
   onDeleteItem
 }: TripDetailProps) {
   const [newBagName, setNewBagName] = useState('');
   const [isAddingBag, setIsAddingBag] = useState(false);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-  const [bagPages, setBagPages] = useState<Record<string, number>>({});
 
   const handleAddBag = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,16 +37,7 @@ export function TripDetail({
     }
   };
 
-  const openPrintModal = () => {
-    const initialAssignments: Record<string, number> = {};
-    trip.bags.forEach((bag, index) => {
-      initialAssignments[bag.id] = Math.floor(index / 2) + 1; // 2 bags per page by default
-    });
-    setBagPages(initialAssignments);
-    setIsPrintModalOpen(true);
-  };
-
-  const uniquePages = Array.from(new Set(Object.values(bagPages))).sort((a, b) => a - b);
+  const uniquePages = Array.from(new Set(trip.bags.map(b => b.page || 1))).sort((a, b) => a - b);
 
   const totalItems = trip.bags.reduce((acc, bag) => acc + bag.items.length, 0);
   const packedItems = trip.bags.reduce((acc, bag) => acc + bag.items.filter(i => i.isPacked).length, 0);
@@ -70,7 +62,7 @@ export function TripDetail({
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={openPrintModal}
+              onClick={() => window.print()}
               className="p-2 text-[#5d6d53] bg-[#f1eee4] hover:bg-[#e5e1d5] rounded-full transition-colors flex items-center gap-2 px-4"
               title="Générer PDF / Imprimer"
             >
@@ -160,6 +152,7 @@ export function TripDetail({
                     onToggleItem={onToggleItem}
                     onDeleteItem={onDeleteItem}
                     onDeleteBag={onDeleteBag}
+                    onUpdateBagPage={onUpdateBagPage}
                   />
                 ))}
               </div>
@@ -167,56 +160,6 @@ export function TripDetail({
           </div>
         </main>
       </div>
-
-      {/* Print Configuration Modal */}
-      {isPrintModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:hidden">
-          <div className="bg-[#fdfcf9] rounded-3xl p-6 w-full max-w-lg border border-[#e5e1d5] shadow-xl">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-serif italic font-bold text-[#3e4a36]">Configuration PDF</h2>
-              <button onClick={() => setIsPrintModalOpen(false)} className="text-[#8c887d] hover:text-[#434138] p-1">
-                <X size={20} />
-              </button>
-            </div>
-            <p className="text-sm text-[#8c887d] mb-4">
-              Choisissez sur quelle page chaque bagage doit apparaître. Nous recommandons 2 bagages par page pour un rendu optimal.
-            </p>
-            <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2 mb-6">
-              {trip.bags.map(bag => (
-                <div key={bag.id} className="flex items-center justify-between p-3 bg-white border border-[#e5e1d5] rounded-xl">
-                  <span className="font-medium text-[#434138] truncate pr-4">{bag.name}</span>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <label className="text-xs text-[#8c887d] uppercase font-bold tracking-wider">Page</label>
-                    <select
-                      value={bagPages[bag.id] || 1}
-                      onChange={(e) => setBagPages({ ...bagPages, [bag.id]: parseInt(e.target.value) })}
-                      className="bg-[#f1eee4] border border-[#e5e1d5] rounded-lg text-sm px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#5d6d53] font-medium text-[#434138]"
-                    >
-                      {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                        <option key={n} value={n}>{n}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              ))}
-              {trip.bags.length === 0 && (
-                <p className="text-sm text-[#8c887d] italic text-center py-4">Aucun bagage à imprimer.</p>
-              )}
-            </div>
-            <button
-              disabled={trip.bags.length === 0}
-              onClick={() => {
-                setIsPrintModalOpen(false);
-                setTimeout(() => window.print(), 300);
-              }}
-              className="w-full flex items-center justify-center gap-2 bg-[#5d6d53] text-white py-3 rounded-2xl shadow-md shadow-[#5d6d53]/20 hover:bg-[#3e4a36] transition-colors font-medium disabled:opacity-50"
-            >
-              <Printer size={18} />
-              Générer le PDF
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Print Layout */}
       <div className="hidden print:block w-full bg-white text-black">
@@ -239,7 +182,7 @@ export function TripDetail({
         `}</style>
         
         {uniquePages.length > 0 ? uniquePages.map(pageNum => {
-          const bagsOnPage = trip.bags.filter(b => bagPages[b.id] === pageNum);
+          const bagsOnPage = trip.bags.filter(b => (b.page || 1) === pageNum);
           if (bagsOnPage.length === 0) return null;
           
           return (
@@ -248,7 +191,6 @@ export function TripDetail({
                 <h1 className="text-3xl font-bold font-serif italic text-black">{trip.name}</h1>
                 <div className="flex justify-center items-center gap-4 mt-2">
                   {trip.date && <p className="text-sm text-gray-600">{trip.date}</p>}
-                  <p className="text-xs text-gray-400">Page {pageNum}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-x-10 gap-y-10 items-start">

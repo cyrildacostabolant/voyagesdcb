@@ -8,7 +8,15 @@ export const addBag = mutationGeneric({
     return await ctx.db.insert("bags", {
       tripId: args.tripId,
       name: args.name,
+      page: 1,
     });
+  },
+});
+
+export const updateBagPage = mutationGeneric({
+  args: { id: v.id("bags"), page: v.number() },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { page: args.page });
   },
 });
 
