@@ -157,28 +157,37 @@ export function TripDetail({
 
       {/* Print Layout */}
       <div className="hidden print:block print:w-full print:bg-white print:text-black">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold font-serif italic">{trip.name}</h1>
-          {trip.date && <p className="text-sm text-gray-500">{trip.date}</p>}
+        <style>{`
+          @media print {
+            @page { margin: 1cm; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          }
+        `}</style>
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold font-serif italic text-black">{trip.name}</h1>
+          {trip.date && <p className="text-sm text-gray-600 mt-2">{trip.date}</p>}
         </div>
-        <div className="grid grid-cols-2 gap-8 gap-y-12">
+        <div className="grid grid-cols-2 gap-x-12 gap-y-12">
           {trip.bags.map(bag => (
             <div key={bag.id} className="break-inside-avoid">
-              <div className="font-bold text-[#b30000] text-lg border-b border-l border-r border-[#a5c2d6] p-2 text-center bg-[#f0f8ff]">
+              <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
                 {bag.name}
               </div>
-              <div className="border-l border-r border-[#a5c2d6]">
-                {bag.items.map(item => (
-                  <div key={item.id} className="border-b border-[#a5c2d6] p-2 text-sm min-h-[36px] flex items-center justify-between">
-                    <span>{item.name}</span>
-                    <div className="w-4 h-4 border border-gray-400 rounded-sm"></div>
+              <div className="border border-[#a2b9ce]">
+                {bag.items.map((item, index) => (
+                  <div 
+                    key={item.id} 
+                    className={`px-3 py-2 text-[13px] min-h-[32px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
+                  >
+                    <span className="text-gray-900">{item.name}</span>
+                    <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px]"></div>
                   </div>
                 ))}
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={`empty-${i}`} className="border-b border-[#a5c2d6] p-2 min-h-[36px] flex items-center justify-end">
-                    <div className="w-4 h-4 border border-gray-400 rounded-sm"></div>
+                {bag.items.length === 0 && (
+                  <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
+                    Aucun élément
                   </div>
-                ))}
+                )}
               </div>
             </div>
           ))}
