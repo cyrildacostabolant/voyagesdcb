@@ -221,31 +221,36 @@ export function TripDetail({
                       <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
                         {bag.name}
                       </div>
-                      <div className="border border-[#a2b9ce]">
-                        {bag.items.map((item, index) => (
-                          <div 
-                            key={item.id || index} 
-                            className={`text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
-                          >
-                            <div className="flex items-center min-w-0 flex-1 self-stretch">
+                      <table className="w-full border-collapse border border-[#a2b9ce] bg-white text-[13px]">
+                        <tbody>
+                          {bag.items.map((item, index) => (
+                            <tr 
+                              key={item.id || index} 
+                              className={index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}
+                            >
                               {/* Column with Quantity */}
-                              <div className="w-10 text-center font-bold text-gray-700 border-r border-[#a2b9ce] py-1.5 self-stretch flex items-center justify-center bg-[#fafbfc] shrink-0">
+                              <td className="w-10 text-center font-bold text-gray-700 border-r border-[#a2b9ce] py-1.5 bg-[#fafbfc] align-middle">
                                 {item.quantity !== undefined ? item.quantity : 1}
-                              </div>
+                              </td>
                               {/* Column with Item Name */}
-                              <span className="text-gray-900 leading-tight truncate min-w-0 px-3 py-1.5 flex-1">
+                              <td className="text-gray-900 leading-tight px-3 py-1.5 align-middle break-words">
                                 {item.name}
-                              </span>
-                            </div>
-                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 mr-3 ml-2"></div>
-                          </div>
-                        ))}
-                        {bag.items.length === 0 && (
-                          <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
-                            Aucun élément
-                          </div>
-                        )}
-                      </div>
+                              </td>
+                              {/* Checkbox Column */}
+                              <td className="w-10 py-1.5 align-middle text-right pr-3">
+                                <div className="inline-block w-3.5 h-3.5 border border-gray-400 rounded-[3px]"></div>
+                              </td>
+                            </tr>
+                          ))}
+                          {bag.items.length === 0 && (
+                            <tr>
+                              <td colSpan={3} className="px-3 py-4 text-sm text-center text-gray-400 italic">
+                                Aucun élément
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                   ))}
                 </div>
@@ -257,31 +262,36 @@ export function TripDetail({
                       <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
                         {bag.name}
                       </div>
-                      <div className="border border-[#a2b9ce]">
-                        {bag.items.map((item, index) => (
-                          <div 
-                            key={item.id || index} 
-                            className={`text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
-                          >
-                            <div className="flex items-center min-w-0 flex-1 self-stretch">
+                      <table className="w-full border-collapse border border-[#a2b9ce] bg-white text-[13px]">
+                        <tbody>
+                          {bag.items.map((item, index) => (
+                            <tr 
+                              key={item.id || index} 
+                              className={index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}
+                            >
                               {/* Column with Quantity */}
-                              <div className="w-10 text-center font-bold text-gray-700 border-r border-[#a2b9ce] py-1.5 self-stretch flex items-center justify-center bg-[#fafbfc] shrink-0">
+                              <td className="w-10 text-center font-bold text-gray-700 border-r border-[#a2b9ce] py-1.5 bg-[#fafbfc] align-middle">
                                 {item.quantity !== undefined ? item.quantity : 1}
-                              </div>
+                              </td>
                               {/* Column with Item Name */}
-                              <span className="text-gray-900 leading-tight truncate min-w-0 px-3 py-1.5 flex-1">
+                              <td className="text-gray-900 leading-tight px-3 py-1.5 align-middle break-words">
                                 {item.name}
-                              </span>
-                            </div>
-                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 mr-3 ml-2"></div>
-                          </div>
-                        ))}
-                        {bag.items.length === 0 && (
-                          <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
-                            Aucun élément
-                          </div>
-                        )}
-                      </div>
+                              </td>
+                              {/* Checkbox Column */}
+                              <td className="w-10 py-1.5 align-middle text-right pr-3">
+                                <div className="inline-block w-3.5 h-3.5 border border-gray-400 rounded-[3px]"></div>
+                              </td>
+                            </tr>
+                          ))}
+                          {bag.items.length === 0 && (
+                            <tr>
+                              <td colSpan={3} className="px-3 py-4 text-sm text-center text-gray-400 italic">
+                                Aucun élément
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                   ))}
                 </div>
