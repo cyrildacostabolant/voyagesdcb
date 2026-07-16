@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import { Bag } from '../types';
-import { Check, Plus, Trash2, X } from 'lucide-react';
+import { Check, Plus, Trash2, X, Pencil } from 'lucide-react';
 
 interface BagViewProps {
   tripId: string;
   bag: Bag;
   onAddItem: (tripId: string, bagId: string, name: string) => void;
   onToggleItem: (tripId: string, bagId: string, itemId: string, isPacked: boolean) => void;
+  onUpdateItem: (tripId: string, bagId: string, itemId: string, updates: { name?: string; quantity?: number; isPacked?: boolean }) => void;
   onDeleteItem: (tripId: string, bagId: string, itemId: string) => void;
   onDeleteBag: (tripId: string, bagId: string) => void;
   onUpdateBagPage: (bagId: string, page: number) => void;
 }
 
-export function BagView({ tripId, bag, onAddItem, onToggleItem, onDeleteItem, onDeleteBag, onUpdateBagPage }: BagViewProps) {
+export function BagView({ 
+  tripId, 
+  bag, 
+  onAddItem, 
+  onToggleItem, 
+  onUpdateItem,
+  onDeleteItem, 
+  onDeleteBag, 
+  onUpdateBagPage 
+}: BagViewProps) {
   const [newItemName, setNewItemName] = useState('');
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,6 +67,7 @@ export function BagView({ tripId, bag, onAddItem, onToggleItem, onDeleteItem, on
         <ul className="space-y-2">
           {bag.items.map((item, index) => (
             <li key={item.id || index} className="flex items-center group/item p-3 bg-[#fdfcf9] border border-[#e5e1d5] rounded-xl transition-colors">
+              {/* Checkbox */}
               <button
                 onClick={() => onToggleItem(tripId, bag.id, item.id, item.isPacked)}
                 className="flex-shrink-0 mr-3 flex items-center justify-center w-5 h-5 rounded-md border text-white transition-colors"
@@ -65,12 +78,81 @@ export function BagView({ tripId, bag, onAddItem, onToggleItem, onDeleteItem, on
               >
                 {item.isPacked && <Check size={14} strokeWidth={3} />}
               </button>
-              <span className={`flex-1 text-sm ${item.isPacked ? 'text-[#8c887d]' : 'text-[#434138]'}`}>
-                {item.name}
-              </span>
+
+              {/* Editable Name Input/Text */}
+              {editingItemId === item.id ? (
+                <input
+                  type="text"
+                  value={editingName}
+                  onChange={e => setEditingName(e.target.value)}
+                  onBlur={() => {
+                    if (editingName.trim() && editingName.trim() !== item.name) {
+                      onUpdateItem(tripId, bag.id, item.id, { name: editingName.trim() });
+                    }
+                    setEditingItemId(null);
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      if (editingName.trim() && editingName.trim() !== item.name) {
+                        onUpdateItem(tripId, bag.id, item.id, { name: editingName.trim() });
+                      }
+                      setEditingItemId(null);
+                    } else if (e.key === 'Escape') {
+                      setEditingItemId(null);
+                    }
+                  }}
+                  autoFocus
+                  className="flex-1 bg-white border border-[#e5e1d5] rounded-lg px-2 py-0.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#5d6d53] text-[#434138]"
+                />
+              ) : (
+                <span 
+                  onClick={() => {
+                    setEditingItemId(item.id);
+                    setEditingName(item.name);
+                  }}
+                  className={`flex-1 text-sm ${item.isPacked ? 'text-[#8c887d] line-through' : 'text-[#434138]'} cursor-pointer hover:text-[#5d6d53] flex items-center gap-1 truncate pr-2`}
+                  title="Cliquer pour modifier"
+                >
+                  <span className="truncate">{item.name}</span>
+                  <Pencil size={12} className="text-[#8c887d] opacity-0 group-hover/item:opacity-50 hover:!opacity-100 transition-opacity shrink-0 ml-1" />
+                </span>
+              )}
+
+              {/* Quantity Stepper */}
+              <div className="flex items-center gap-1 bg-[#f1eee4] px-1.5 py-0.5 rounded-lg select-none mr-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentQty = item.quantity ?? 1;
+                    const newQty = Math.max(0, currentQty - 1);
+                    onUpdateItem(tripId, bag.id, item.id, { quantity: newQty });
+                  }}
+                  className="w-4 h-4 flex items-center justify-center text-xs font-bold text-[#8c887d] hover:text-red-600 hover:bg-[#e5e1d5] rounded transition-colors"
+                  title="Diminuer la quantité"
+                >
+                  -
+                </button>
+                <span className="text-xs font-bold text-[#434138] min-w-[12px] text-center px-0.5">
+                  {item.quantity ?? 1}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentQty = item.quantity ?? 1;
+                    const newQty = currentQty + 1;
+                    onUpdateItem(tripId, bag.id, item.id, { quantity: newQty });
+                  }}
+                  className="w-4 h-4 flex items-center justify-center text-xs font-bold text-[#8c887d] hover:text-[#5d6d53] hover:bg-[#e5e1d5] rounded transition-colors"
+                  title="Augmenter la quantité"
+                >
+                  +
+                </button>
+              </div>
+
+              {/* Delete Button */}
               <button
                 onClick={() => onDeleteItem(tripId, bag.id, item.id)}
-                className="text-[#dcd7cb] hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity p-1"
+                className="text-[#dcd7cb] hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity p-1 shrink-0"
               >
                 <X size={16} />
               </button>

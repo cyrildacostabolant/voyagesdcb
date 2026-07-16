@@ -12,6 +12,7 @@ interface TripDetailProps {
   onUpdateBagPage: (bagId: string, page: number) => void;
   onAddItem: (tripId: string, bagId: string, name: string) => void;
   onToggleItem: (tripId: string, bagId: string, itemId: string, isPacked: boolean) => void;
+  onUpdateItem: (tripId: string, bagId: string, itemId: string, updates: { name?: string; quantity?: number; isPacked?: boolean }) => void;
   onDeleteItem: (tripId: string, bagId: string, itemId: string) => void;
 }
 
@@ -23,6 +24,7 @@ export function TripDetail({
   onUpdateBagPage,
   onAddItem,
   onToggleItem,
+  onUpdateItem,
   onDeleteItem
 }: TripDetailProps) {
   const [newBagName, setNewBagName] = useState('');
@@ -150,6 +152,7 @@ export function TripDetail({
                     bag={bag}
                     onAddItem={onAddItem}
                     onToggleItem={onToggleItem}
+                    onUpdateItem={onUpdateItem}
                     onDeleteItem={onDeleteItem}
                     onDeleteBag={onDeleteBag}
                     onUpdateBagPage={onUpdateBagPage}
@@ -224,7 +227,10 @@ export function TripDetail({
                             key={item.id || index} 
                             className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
                           >
-                            <span className="text-gray-900 leading-tight">{item.name}</span>
+                            <span className="text-gray-900 leading-tight">
+                              {item.name}
+                              {item.quantity !== undefined && item.quantity !== 1 ? ` x ${item.quantity}` : ''}
+                            </span>
                             <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
                           </div>
                         ))}
@@ -251,7 +257,10 @@ export function TripDetail({
                             key={item.id || index} 
                             className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
                           >
-                            <span className="text-gray-900 leading-tight">{item.name}</span>
+                            <span className="text-gray-900 leading-tight">
+                              {item.name}
+                              {item.quantity !== undefined && item.quantity !== 1 ? ` x ${item.quantity}` : ''}
+                            </span>
                             <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
                           </div>
                         ))}

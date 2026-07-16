@@ -17,6 +17,7 @@ export function useTravelStore() {
   
   const addItem = useMutation(api.items.addItem);
   const toggleItemPacked = useMutation(api.items.toggleItemPacked);
+  const updateItem = useMutation(api.items.updateItem);
   const deleteItem = useMutation(api.items.deleteItem);
 
   return {
@@ -30,6 +31,7 @@ export function useTravelStore() {
     updateBagPage: (id: string, page: number) => updateBagPage({ id, page }),
     addItem: (tripId: string, bagId: string, name: string) => addItem({ bagId, name }),
     toggleItemPacked: (tripId: string, bagId: string, id: string, isPacked: boolean) => toggleItemPacked({ id, isPacked }),
+    updateItem: (tripId: string, bagId: string, id: string, updates: { name?: string; quantity?: number; isPacked?: boolean }) => updateItem({ id, ...updates }),
     deleteItem: (tripId: string, bagId: string, id: string) => deleteItem({ id })
   };
 }

@@ -27,6 +27,7 @@ export default function App() {
           onUpdateBagPage={store.updateBagPage}
           onAddItem={store.addItem}
           onToggleItem={store.toggleItemPacked}
+          onUpdateItem={store.updateItem}
           onDeleteItem={store.deleteItem}
         />
       </div>

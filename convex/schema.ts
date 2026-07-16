@@ -16,5 +16,6 @@ export default defineSchema({
     bagId: v.id("bags"),
     name: v.string(),
     isPacked: v.boolean(),
+    quantity: v.optional(v.number()),
   }),
 });
