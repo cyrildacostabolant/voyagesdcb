@@ -21,7 +21,8 @@ export const getTrips = queryGeneric({
               .query("items")
               .filter((q) => q.eq(q.field("bagId"), bag._id))
               .collect();
-            return { ...bag, items, id: bag._id };
+            const mappedItems = items.map((item) => ({ ...item, id: item._id }));
+            return { ...bag, items: mappedItems, id: bag._id };
           })
         );
         

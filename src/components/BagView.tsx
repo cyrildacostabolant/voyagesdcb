@@ -53,8 +53,8 @@ export function BagView({ tripId, bag, onAddItem, onToggleItem, onDeleteItem, on
       </div>
       <div className="p-5 flex-1 bg-white">
         <ul className="space-y-2">
-          {bag.items.map(item => (
-            <li key={item.id} className="flex items-center group/item p-3 bg-[#fdfcf9] border border-[#e5e1d5] rounded-xl transition-colors">
+          {bag.items.map((item, index) => (
+            <li key={item.id || index} className="flex items-center group/item p-3 bg-[#fdfcf9] border border-[#e5e1d5] rounded-xl transition-colors">
               <button
                 onClick={() => onToggleItem(tripId, bag.id, item.id, item.isPacked)}
                 className="flex-shrink-0 mr-3 flex items-center justify-center w-5 h-5 rounded-md border text-white transition-colors"

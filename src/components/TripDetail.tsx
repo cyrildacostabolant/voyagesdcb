@@ -168,8 +168,7 @@ export function TripDetail({
             @page { margin: 0; size: A4 portrait; }
             body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white !important; }
             .print-page {
-              width: 210mm;
-              min-height: 296mm;
+              width: 100%;
               padding: 10mm;
               box-sizing: border-box;
               page-break-after: always;
@@ -185,6 +184,24 @@ export function TripDetail({
           const bagsOnPage = trip.bags.filter(b => (b.page || 1) === pageNum);
           if (bagsOnPage.length === 0) return null;
           
+          // Programmatically distribute bags into 2 columns to optimize space and prevent unnecessary multi-page splitting
+          const leftColBags: typeof bagsOnPage = [];
+          const rightColBags: typeof bagsOnPage = [];
+          let leftHeight = 0;
+          let rightHeight = 0;
+
+          bagsOnPage.forEach(bag => {
+            // Estimate height: 40px for header + 30px per item
+            const estimatedHeight = 40 + (bag.items?.length || 0) * 30;
+            if (leftHeight <= rightHeight) {
+              leftColBags.push(bag);
+              leftHeight += estimatedHeight;
+            } else {
+              rightColBags.push(bag);
+              rightHeight += estimatedHeight;
+            }
+          });
+
           return (
             <div key={pageNum} className="print-page">
               <div className="text-center mb-8">
@@ -193,30 +210,60 @@ export function TripDetail({
                   {trip.date && <p className="text-sm text-gray-600">{trip.date}</p>}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-x-10 gap-y-10 items-start">
-                {bagsOnPage.map(bag => (
-                  <div key={bag.id} className="break-inside-avoid">
-                    <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
-                      {bag.name}
+              <div className="grid grid-cols-2 gap-x-10 items-start">
+                {/* Column 1 */}
+                <div className="flex flex-col gap-y-8">
+                  {leftColBags.map(bag => (
+                    <div key={bag.id} className="break-inside-avoid">
+                      <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
+                        {bag.name}
+                      </div>
+                      <div className="border border-[#a2b9ce]">
+                        {bag.items.map((item, index) => (
+                          <div 
+                            key={item.id || index} 
+                            className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
+                          >
+                            <span className="text-gray-900 leading-tight">{item.name}</span>
+                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
+                          </div>
+                        ))}
+                        {bag.items.length === 0 && (
+                          <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
+                            Aucun élément
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="border border-[#a2b9ce]">
-                      {bag.items.map((item, index) => (
-                        <div 
-                          key={item.id} 
-                          className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
-                        >
-                          <span className="text-gray-900 leading-tight">{item.name}</span>
-                          <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
-                        </div>
-                      ))}
-                      {bag.items.length === 0 && (
-                        <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
-                          Aucun élément
-                        </div>
-                      )}
+                  ))}
+                </div>
+
+                {/* Column 2 */}
+                <div className="flex flex-col gap-y-8">
+                  {rightColBags.map(bag => (
+                    <div key={bag.id} className="break-inside-avoid">
+                      <div className="font-bold text-[#b30000] text-center mb-2 text-lg">
+                        {bag.name}
+                      </div>
+                      <div className="border border-[#a2b9ce]">
+                        {bag.items.map((item, index) => (
+                          <div 
+                            key={item.id || index} 
+                            className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
+                          >
+                            <span className="text-gray-900 leading-tight">{item.name}</span>
+                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
+                          </div>
+                        ))}
+                        {bag.items.length === 0 && (
+                          <div className="px-3 py-4 text-sm text-center text-gray-400 italic">
+                            Aucun élément
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           );
