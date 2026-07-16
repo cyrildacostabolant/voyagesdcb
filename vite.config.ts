@@ -11,7 +11,7 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['icon.svg'],
+        includeAssets: ['icon.svg', 'apple-touch-icon-180x180.png', 'maskable-icon-512x512.png'],
         manifest: {
           name: 'Mes Bagages',
           short_name: 'Bagages',
@@ -21,15 +21,19 @@ export default defineConfig(() => {
           display: "standalone",
           icons: [
             {
-              src: 'icon.svg',
+              src: 'pwa-192x192.png',
               sizes: '192x192',
-              type: 'image/svg+xml',
-              purpose: 'any maskable'
+              type: 'image/png'
             },
             {
-              src: 'icon.svg',
+              src: 'pwa-512x512.png',
               sizes: '512x512',
-              type: 'image/svg+xml',
+              type: 'image/png'
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
               purpose: 'any maskable'
             }
           ]
