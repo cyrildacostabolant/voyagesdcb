@@ -172,7 +172,7 @@ export function TripDetail({
             body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white !important; }
             .print-page {
               width: 100%;
-              padding: 10mm;
+              padding: 6mm 8mm;
               box-sizing: border-box;
               page-break-after: always;
               background: white;
@@ -207,11 +207,9 @@ export function TripDetail({
 
           return (
             <div key={pageNum} className="print-page">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold font-serif italic text-black">{trip.name}</h1>
-                <div className="flex justify-center items-center gap-4 mt-2">
-                  {trip.date && <p className="text-sm text-gray-600">{trip.date}</p>}
-                </div>
+              <div className="border-b border-gray-300 pb-1.5 mb-4 flex justify-between items-center">
+                <h1 className="text-sm font-bold uppercase tracking-wider text-gray-700">{trip.name}</h1>
+                {trip.date && <p className="text-xs text-gray-500 font-mono">{trip.date}</p>}
               </div>
               <div className="grid grid-cols-2 gap-x-10 items-start">
                 {/* Column 1 */}
