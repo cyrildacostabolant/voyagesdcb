@@ -14,7 +14,7 @@ export default defineConfig(() => {
         devOptions: {
           enabled: true
         },
-        includeAssets: ['icon.svg', 'apple-touch-icon-180x180.png', 'maskable-icon-512x512.png'],
+        includeAssets: ['icon.svg', 'apple-touch-icon-180x180.png', 'maskable-icon-512x512.png', 'pwa-192x192.png', 'pwa-512x512.png'],
         manifest: {
           name: 'Mes Bagages',
           short_name: 'Bagages',
@@ -24,19 +24,19 @@ export default defineConfig(() => {
           display: "standalone",
           icons: [
             {
-              src: 'pwa-192x192.png',
+              src: '/pwa-192x192.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any'
             },
             {
-              src: 'pwa-512x512.png',
+              src: '/pwa-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any'
             },
             {
-              src: 'maskable-icon-512x512.png',
+              src: '/maskable-icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable'
