@@ -225,13 +225,19 @@ export function TripDetail({
                         {bag.items.map((item, index) => (
                           <div 
                             key={item.id || index} 
-                            className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
+                            className={`text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
                           >
-                            <span className="text-gray-900 leading-tight">
-                              {item.name}
-                              {item.quantity !== undefined && item.quantity !== 1 ? ` x ${item.quantity}` : ''}
-                            </span>
-                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
+                            <div className="flex items-center min-w-0 flex-1 self-stretch">
+                              {/* Column with Quantity */}
+                              <div className="w-10 text-center font-bold text-gray-700 border-r border-[#a2b9ce] py-1.5 self-stretch flex items-center justify-center bg-[#fafbfc] shrink-0">
+                                {item.quantity !== undefined ? item.quantity : 1}
+                              </div>
+                              {/* Column with Item Name */}
+                              <span className="text-gray-900 leading-tight truncate min-w-0 px-3 py-1.5 flex-1">
+                                {item.name}
+                              </span>
+                            </div>
+                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 mr-3 ml-2"></div>
                           </div>
                         ))}
                         {bag.items.length === 0 && (
@@ -255,13 +261,19 @@ export function TripDetail({
                         {bag.items.map((item, index) => (
                           <div 
                             key={item.id || index} 
-                            className={`px-3 py-1.5 text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
+                            className={`text-[13px] min-h-[30px] flex items-center justify-between ${index !== bag.items.length - 1 ? 'border-b border-[#a2b9ce]' : ''}`}
                           >
-                            <span className="text-gray-900 leading-tight">
-                              {item.name}
-                              {item.quantity !== undefined && item.quantity !== 1 ? ` x ${item.quantity}` : ''}
-                            </span>
-                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 ml-2"></div>
+                            <div className="flex items-center min-w-0 flex-1 self-stretch">
+                              {/* Column with Quantity */}
+                              <div className="w-10 text-center font-bold text-gray-700 border-r border-[#a2b9ce] py-1.5 self-stretch flex items-center justify-center bg-[#fafbfc] shrink-0">
+                                {item.quantity !== undefined ? item.quantity : 1}
+                              </div>
+                              {/* Column with Item Name */}
+                              <span className="text-gray-900 leading-tight truncate min-w-0 px-3 py-1.5 flex-1">
+                                {item.name}
+                              </span>
+                            </div>
+                            <div className="w-3.5 h-3.5 border border-gray-400 rounded-[3px] shrink-0 mr-3 ml-2"></div>
                           </div>
                         ))}
                         {bag.items.length === 0 && (
