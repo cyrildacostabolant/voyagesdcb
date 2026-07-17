@@ -38,7 +38,7 @@ export function BagView({
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-[#e5e1d5] overflow-hidden flex flex-col">
       <div className="bg-[#fdfcf9] px-5 py-4 border-b border-[#e5e1d5] flex justify-between items-center group">
-        <h3 className="font-serif italic font-bold text-[#3e4a36] text-xl truncate pr-2">{bag.name}</h3>
+        <h3 className="font-serif italic font-bold text-[#3e4a36] text-lg sm:text-xl break-words whitespace-normal leading-snug pr-2" title={bag.name}>{bag.name}</h3>
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1">
             <span className="text-[10px] text-[#8c887d] uppercase font-bold tracking-wider">Page</span>
@@ -110,11 +110,11 @@ export function BagView({
                     setEditingItemId(item.id);
                     setEditingName(item.name);
                   }}
-                  className={`flex-1 text-sm ${item.isPacked ? 'text-[#8c887d] line-through' : 'text-[#434138]'} cursor-pointer hover:text-[#5d6d53] flex items-center gap-1 truncate pr-2`}
+                  className={`flex-1 text-sm ${item.isPacked ? 'text-[#8c887d] line-through' : 'text-[#434138]'} cursor-pointer hover:text-[#5d6d53] pr-2 break-words whitespace-normal leading-normal`}
                   title="Cliquer pour modifier"
                 >
-                  <span className="truncate">{item.name}</span>
-                  <Pencil size={12} className="text-[#8c887d] opacity-0 group-hover/item:opacity-50 hover:!opacity-100 transition-opacity shrink-0 ml-1" />
+                  <span className="break-words mr-1">{item.name}</span>
+                  <Pencil size={12} className="inline-block text-[#8c887d] opacity-0 group-hover/item:opacity-50 hover:!opacity-100 transition-opacity shrink-0 align-middle" />
                 </span>
               )}
 
