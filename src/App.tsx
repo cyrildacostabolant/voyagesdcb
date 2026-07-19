@@ -25,6 +25,7 @@ export default function App() {
           onAddBag={store.addBag}
           onDeleteBag={store.deleteBag}
           onUpdateBagPage={store.updateBagPage}
+          onUpdateBagName={store.updateBagName}
           onAddItem={store.addItem}
           onToggleItem={store.toggleItemPacked}
           onUpdateItem={store.updateItem}

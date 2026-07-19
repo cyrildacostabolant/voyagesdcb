@@ -10,6 +10,7 @@ interface TripDetailProps {
   onAddBag: (tripId: string, name: string) => void;
   onDeleteBag: (tripId: string, bagId: string) => void;
   onUpdateBagPage: (bagId: string, page: number) => void;
+  onUpdateBagName: (bagId: string, name: string) => void;
   onAddItem: (tripId: string, bagId: string, name: string) => void;
   onToggleItem: (tripId: string, bagId: string, itemId: string, isPacked: boolean) => void;
   onUpdateItem: (tripId: string, bagId: string, itemId: string, updates: { name?: string; quantity?: number; isPacked?: boolean }) => void;
@@ -22,6 +23,7 @@ export function TripDetail({
   onAddBag,
   onDeleteBag,
   onUpdateBagPage,
+  onUpdateBagName,
   onAddItem,
   onToggleItem,
   onUpdateItem,
@@ -156,6 +158,7 @@ export function TripDetail({
                     onDeleteItem={onDeleteItem}
                     onDeleteBag={onDeleteBag}
                     onUpdateBagPage={onUpdateBagPage}
+                    onUpdateBagName={onUpdateBagName}
                   />
                 ))}
               </div>

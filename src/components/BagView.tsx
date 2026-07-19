@@ -11,6 +11,7 @@ interface BagViewProps {
   onDeleteItem: (tripId: string, bagId: string, itemId: string) => void;
   onDeleteBag: (tripId: string, bagId: string) => void;
   onUpdateBagPage: (bagId: string, page: number) => void;
+  onUpdateBagName: (bagId: string, name: string) => void;
 }
 
 export function BagView({ 
@@ -21,11 +22,14 @@ export function BagView({
   onUpdateItem,
   onDeleteItem, 
   onDeleteBag, 
-  onUpdateBagPage 
+  onUpdateBagPage,
+  onUpdateBagName
 }: BagViewProps) {
   const [newItemName, setNewItemName] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [isEditingBagName, setIsEditingBagName] = useState(false);
+  const [editingBagName, setEditingBagName] = useState(bag.name);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +42,46 @@ export function BagView({
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-[#e5e1d5] overflow-hidden flex flex-col">
       <div className="bg-[#fdfcf9] px-5 py-4 border-b border-[#e5e1d5] flex justify-between items-center group">
-        <h3 className="font-serif italic font-bold text-[#3e4a36] text-lg sm:text-xl break-words whitespace-normal leading-snug pr-2" title={bag.name}>{bag.name}</h3>
+        {isEditingBagName ? (
+          <input
+            type="text"
+            value={editingBagName}
+            onChange={e => setEditingBagName(e.target.value)}
+            onBlur={() => {
+              if (editingBagName.trim() && editingBagName.trim() !== bag.name) {
+                onUpdateBagName(bag.id, editingBagName.trim());
+              }
+              setIsEditingBagName(false);
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                if (editingBagName.trim() && editingBagName.trim() !== bag.name) {
+                  onUpdateBagName(bag.id, editingBagName.trim());
+                }
+                setIsEditingBagName(false);
+              } else if (e.key === 'Escape') {
+                setEditingBagName(bag.name);
+                setIsEditingBagName(false);
+              }
+            }}
+            className="font-serif italic font-bold text-[#3e4a36] text-lg sm:text-xl bg-[#f1eee4] border border-[#e5e1d5] rounded-xl px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-[#5d6d53] flex-1 mr-2"
+            autoFocus
+          />
+        ) : (
+          <div 
+            className="flex items-center gap-1.5 min-w-0 flex-1 cursor-pointer group/title"
+            onClick={() => {
+              setEditingBagName(bag.name);
+              setIsEditingBagName(true);
+            }}
+            title="Cliquer pour modifier"
+          >
+            <h3 className="font-serif italic font-bold text-[#3e4a36] text-lg sm:text-xl break-words whitespace-normal leading-snug pr-1">
+              {bag.name}
+            </h3>
+            <Pencil size={14} className="text-[#8c887d] opacity-0 group-hover/title:opacity-100 hover:text-[#5d6d53] transition-opacity shrink-0" />
+          </div>
+        )}
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1">
             <span className="text-[10px] text-[#8c887d] uppercase font-bold tracking-wider">Page</span>

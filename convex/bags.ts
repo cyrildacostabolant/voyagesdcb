@@ -20,6 +20,13 @@ export const updateBagPage = mutationGeneric({
   },
 });
 
+export const updateBagName = mutationGeneric({
+  args: { id: v.id("bags"), name: v.string() },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { name: args.name });
+  },
+});
+
 export const deleteBag = mutationGeneric({
   args: { id: v.id("bags") },
   handler: async (ctx, args) => {
